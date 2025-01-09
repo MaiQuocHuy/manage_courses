@@ -1,10 +1,11 @@
+"use client";
+
 import { useGetCourseQuery, useUpdateCourseMutation } from "@/state/api";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/state/redux";
-import { Form, useForm } from "react-hook-form";
+import { Form, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { courseSchema } from "@/lib/schemas";
 import { openSectionModal, setSections } from "@/state";
@@ -14,6 +15,8 @@ import Header from "@/components/Header";
 import { CustomFormField } from "@/components/CustomFormField";
 import { Button } from "@/components/ui/button";
 import DroppableComponent from "@/components/Droppable";
+import SectionModal from "./SectionModal";
+import ChapterModal from "./ChapterModal";
 
 const CourseEditor = () => {
   const router = useRouter();
@@ -71,14 +74,18 @@ const CourseEditor = () => {
       <div className="flex items-center gap-5 mb-5">
         <button
           className="flex items-center border border-customgreys-dirtyGrey rounded-lg p-2 gap-2 cursor-pointer hover:bg-customgreys-dirtyGrey hover:text-white-100 text-customgreys-dirtyGrey"
-          onClick={() => router.push("/teacher/courses", { scroll: false })}
+          onClick={() =>
+            router.push("/teacher/courses", {
+              scroll: false,
+            })
+          }
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Courses</span>
         </button>
       </div>
 
-      <Form {...methods}>
+      <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Header
             title="Course Setup"
@@ -188,10 +195,10 @@ const CourseEditor = () => {
             </div>
           </div>
         </form>
-      </Form>
-      {/* 
+      </FormProvider>
+
       <ChapterModal />
-      <SectionModal /> */}
+      <SectionModal />
     </div>
   );
 };

@@ -43,18 +43,23 @@ export const createStripePaymentIntent = async (
   }
 };
 
-export const listTransactions = async (req: Request, res: Response): Promise<void> => {
-  const {userId} = req.query;
+export const listTransactions = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { userId } = req.query;
   try {
-    const transactions = userId ? await Transaction.query("userId").eq(userId).exec() : await Transaction.scan().exec();
+    const transactions = userId
+      ? await Transaction.query("userId").eq(userId).exec()
+      : await Transaction.scan().exec();
     res.json({
       message: "Transaction retrieved successfully",
-      data: transactions
-    })
+      data: transactions,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error fetching transactions", error });
   }
-}
+};
 
 export const createTransaction = async (
   req: Request,
@@ -64,6 +69,7 @@ export const createTransaction = async (
   try {
     // create transaction
     const course = await Course.get(courseId);
+
     // create trasaction record
     const newTransaction = new Transaction({
       dateTime: new Date().toISOString(),
@@ -83,7 +89,7 @@ export const createTransaction = async (
       enrollmentDate: new Date().toISOString(),
       overallProgress: 0,
       sections: course.sections.map((section: any) => ({
-        sectionId: section.id,
+        sectionId: section.sectionId,
         chapters: section.chapters.map((chapter: any) => ({
           chapterId: chapter.chapterId,
           completed: false,
@@ -91,6 +97,8 @@ export const createTransaction = async (
       })),
       lastAccessedTimestamp: new Date().toISOString(),
     });
+
+    await initialProgress.save();
 
     // add enrollment to relevant course
     await Course.update(

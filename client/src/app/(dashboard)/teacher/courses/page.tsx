@@ -1,5 +1,4 @@
 "use client";
-
 import Header from "@/components/Header";
 import Loading from "@/components/Loading";
 import TeacherCourseCard from "@/components/TeacherCourseCard";
@@ -44,7 +43,9 @@ const Courses = () => {
   }, [courses, searchTerm, selectedCategory]);
 
   const handleEdit = async (course: Course) => {
-    router.push(`/teacher/courses/${course.courseId}`);
+    router.push(`/teacher/courses/${course.courseId}`, {
+      scroll: false,
+    });
   };
 
   const handleDelete = async (course: Course) => {
@@ -59,7 +60,9 @@ const Courses = () => {
       teacherId: user.id,
       teacherName: user.fullName || "Unknown Teacher",
     }).unwrap();
-    router.push(`/teacher/courses/${courseId}`);
+    router.push(`/teacher/courses/${courseId}`,{
+      scroll: false,
+    });
   };
 
   if (isLoading) return <Loading />;

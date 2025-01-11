@@ -25,7 +25,7 @@ const UserBilling = () => {
   const { user, isLoaded } = useUser();
   const { data: transactions, isLoading: isLoadingTransactions } =
     useGetTransactionsQuery(user?.id || "", {
-      skip: !isLoaded || !user, 
+      skip: !isLoaded || !user,
     });
 
   const filteredData =
@@ -68,15 +68,17 @@ const UserBilling = () => {
           ) : (
             <Table className="billing__table">
               <TableHeader className="billing__table-header">
-                <TableHead className="billing__table-header-cell">
-                  Date
-                </TableHead>
-                <TableHead className="billing__table-header-cell">
-                  Amount
-                </TableHead>
-                <TableHead className="billing__table-header-cell">
-                  Payment Method
-                </TableHead>
+                <TableRow className="billing__table-header-row">
+                  <TableHead className="billing__table-header-cell">
+                    Date
+                  </TableHead>
+                  <TableHead className="billing__table-header-cell">
+                    Amount
+                  </TableHead>
+                  <TableHead className="billing__table-header-cell">
+                    Payment Method
+                  </TableHead>
+                </TableRow>
               </TableHeader>
               <TableBody className="billing__table-body">
                 {filteredData.length > 0 ? (

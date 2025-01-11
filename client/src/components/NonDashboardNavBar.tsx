@@ -13,13 +13,14 @@ const NonDashboardNavBar = () => {
     <nav className="nondashboard-navbar">
       <div className="nondashboard-navbar__container">
         <div className="nondashboard-navbar__search">
-          <Link href="/" className="nondashboard-navbar__brand">
+          <Link href="/" scroll={false} className="nondashboard-navbar__brand">
             MaiHuy
           </Link>
           <div className="flex items-center gap-4">
             <div className="relative group">
               <Link
                 href="/search"
+                scroll={false}
                 className="nondashboard-navbar__search-input"
               >
                 <span className="hidden sm:inline">Search Courses</span>

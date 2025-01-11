@@ -1,6 +1,6 @@
 "use client";
 import Loading from "@/components/Loading";
-import { useGetCourseQuery, useGetCoursesQuery } from "@/state/api";
+import { useGetCoursesQuery } from "@/state/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -29,12 +29,16 @@ const Search = () => {
 
   const handleCourseSelect = (course: Course) => {
     setSelectedCourse(course);
-    router.push(`/search?id=${course.courseId}`);
+    router.push(`/search?id=${course.courseId}`, {
+      scroll: false,
+    });
   };
 
   const handleEnrollNow = (courseId: string) => {
     console.log("Enroll Now", courseId);
-    router.push(`/checkout?step=1&id=${courseId}&showSignUp=false`);
+    router.push(`/checkout?step=1&id=${courseId}&showSignUp=false`, {
+      scroll: false,
+    });
   };
 
   return (

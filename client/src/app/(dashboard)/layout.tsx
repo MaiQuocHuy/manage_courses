@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Loading from "@/components/Loading";
@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
 import Navbar from "@/components/Navbar";
+import ChaptersSidebar from "./user/courses/[courseId]/ChaptersSidebar";
 
 export default function DashBoardLayout({
   children,
@@ -16,6 +17,18 @@ export default function DashBoardLayout({
   const pathname = usePathname();
   const [courseId, setCourseId] = React.useState<string | null>(null);
   const { user, isLoaded } = useUser();
+  const isCoursePage = /^\/user\/courses\/[^\/]+(?:\/chapters\/[^\/]+)?$/.test(
+    pathname
+  );
+
+  useEffect(() => {
+    if (isCoursePage) {
+      const match = pathname.match(/\/user\/courses\/([^\/]+)/);
+      setCourseId(match ? match[1] : null);
+    } else {
+      setCourseId(null);
+    }
+  }, [isCoursePage, pathname]);
 
   //handle use effect isCoursePage
   if (!isLoaded) return <Loading />;
@@ -27,6 +40,8 @@ export default function DashBoardLayout({
         <AppSidebar />
         <div className="dashboard__content">
           {/* Chapter sidebar will go */}
+          {courseId && <ChaptersSidebar />}
+
           <div
             className={cn("dashboard__main")}
             style={{

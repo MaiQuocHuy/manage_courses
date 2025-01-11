@@ -9,6 +9,7 @@ const Footer = () => {
         {["Home", "About", "Contact", "Terms of Service", "Privacy Policy"].map(
           (link, index) => (
             <Link
+            scroll={false}
               key={index}
               href={`/${link.toLowerCase().split(" ").join("-")}`}
               className="footer__link"

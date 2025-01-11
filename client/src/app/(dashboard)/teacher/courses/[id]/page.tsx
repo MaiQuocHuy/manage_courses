@@ -1,15 +1,23 @@
 "use client";
 
-import { useGetCourseQuery, useUpdateCourseMutation } from "@/state/api";
+import {
+  useGetCourseQuery,
+  useGetUploadVideoUrlMutation,
+  useUpdateCourseMutation,
+} from "@/state/api";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/state/redux";
-import { Form, FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { courseSchema } from "@/lib/schemas";
 import { openSectionModal, setSections } from "@/state";
-import { centsToDollars, createCourseFormData } from "@/lib/utils";
+import {
+  centsToDollars,
+  createCourseFormData,
+  uploadAllVideos,
+} from "@/lib/utils";
 import { ArrowLeft, Plus } from "lucide-react";
 import Header from "@/components/Header";
 import { CustomFormField } from "@/components/CustomFormField";
@@ -26,6 +34,7 @@ const CourseEditor = () => {
   const { data: course, isLoading, refetch } = useGetCourseQuery(id);
 
   const [updateCourse] = useUpdateCourseMutation();
+  const [getUploadVideoUrl] = useGetUploadVideoUrlMutation();
   //upload video functionality
 
   const dispatch = useAppDispatch();
@@ -53,19 +62,26 @@ const CourseEditor = () => {
       });
       dispatch(setSections(course.sections || []));
     }
-  }, [course, methods]);
+  }, [course, methods]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSubmit = async (data: CourseFormData) => {
     try {
-      const formData = createCourseFormData(data, sections);
-      const updatedCourse = await updateCourse({
+      const updatedSections = await uploadAllVideos(
+        sections,
+        id,
+        getUploadVideoUrl
+      );
+
+      const formData = createCourseFormData(data, updatedSections);
+
+      await updateCourse({
         courseId: id,
         formData,
       }).unwrap();
-      // await uploadAllVideos(sections, updatedCourse.sections, id, uploadVideo);
+
       refetch();
     } catch (error) {
-      console.error(error);
+      console.error("Failed to update course:", error);
     }
   };
 

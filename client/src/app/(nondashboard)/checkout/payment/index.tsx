@@ -11,7 +11,6 @@ import { useClerk, useUser } from "@clerk/nextjs";
 import CoursePreview from "@/components/CoursePreview";
 import { CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createTransaction } from "../../../../../../server/src/controllers/transactionController";
 import { useCreateTransactionMutation } from "@/state/api";
 import { toast } from "sonner";
 
@@ -34,10 +33,16 @@ const PaymentPageContent = () => {
       return;
     }
 
+    const baseUrl = process.env.NEXT_PUBLIC_LOCAL_URL
+      ? `http://${process.env.NEXT_PUBLIC_LOCAL_URL}`
+      : process.env.NEXT_PUBLIC_VERCEL_URL
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+      : undefined;
+
     const result = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${process.env.NEXT_PUBLIC_STRIPE_REDIRECT_URL}/checkout?step=3&id=${courseId}`,
+        return_url: `${baseUrl}/checkout?step=3&id=${courseId}`,
       },
       redirect: "if_required",
     });
@@ -50,7 +55,8 @@ const PaymentPageContent = () => {
         paymentProvider: "stripe",
         amount: course?.price || 0,
       };
-      await createTransaction(transactionData), navigateToStep(3);
+      createTransaction(transactionData);
+      navigateToStep(3);
     }
   };
 

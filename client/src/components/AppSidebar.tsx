@@ -1,6 +1,5 @@
 import { useClerk, useUser } from "@clerk/nextjs";
 import React from "react";
-import path from "path";
 import { usePathname } from "next/navigation";
 import {
   Sidebar,
@@ -23,14 +22,12 @@ import {
 } from "lucide-react";
 import Loading from "./Loading";
 import Image from "next/image";
-import { start } from "repl";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 const AppSidebar = () => {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
-  const path = usePathname();
   const { toggleSidebar } = useSidebar();
   const pathname = usePathname();
 
@@ -138,7 +135,7 @@ const AppSidebar = () => {
                     !isActive && "text-customgreys-dirtyGrey"
                   )}
                 >
-                  <Link href={link.href} className="app-sidebar__nav-link">
+                  <Link href={link.href} scroll={false} className="app-sidebar__nav-link">
                     <link.icon
                       className={isActive ? "text-white-50" : "text-gray-500"}
                     />

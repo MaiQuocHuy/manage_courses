@@ -10,6 +10,8 @@ import {
   createClerkClient,
   requireAuth,
 } from "@clerk/express";
+import serverless from "serverless-http";
+import seed from "./seed/seedDynamodb";
 // Route Imports
 import courseRoutes from "./routes/courseRoutes";
 import userClerkRoutes from "./routes/userClerkRoutes";
@@ -22,7 +24,7 @@ const app = express();
 
 const isProduction = process.env.NODE_ENV === "production";
 if (!isProduction) {
-  dynamoose.aws.ddb.local("http://localhost:8000");
+  dynamoose.aws.ddb.local();
 }
 
 export const clerkClient = createClerkClient({
@@ -56,3 +58,17 @@ if (!isProduction) {
     console.log(`Server is running on http://localhost:${port}`);
   });
 }
+
+// aws production environment
+const serverlessApp = serverless(app);
+export const handler = async (event: any, context: any) => {
+  if (event.action === "seed") {
+    await seed();
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: "Data seeded successfully" }),
+    };
+  } else {
+    return serverlessApp(event, context);
+  }
+};
